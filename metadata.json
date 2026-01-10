@@ -1,0 +1,7 @@
+{
+  "name": "AI-Based Smart IC Scanner",
+  "description": "Professional-grade IC identification and analysis tool using computer vision and semiconductor intelligence to identify partially obscured chips and generate detailed ICT reports.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
