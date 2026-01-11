@@ -351,25 +351,25 @@ export default function App() {
                           <span className="px-3 py-1 bg-blue-500/10 text-blue-400 text-[9px] font-black uppercase tracking-widest rounded-full border border-blue-500/20">Identified Component</span>
                           <div className="h-px w-20 bg-slate-800"></div>
                        </div>
-                       <h3 className="text-4xl md:text-6xl font-black tracking-tighter text-white uppercase mb-4">{state.report.identification.name}</h3>
+                       <h3 className="text-4xl md:text-6xl font-black tracking-tighter text-white uppercase mb-4">{state.report.identification?.name ?? "Unknown ID"}</h3>
                        <div className="flex flex-wrap gap-8 text-slate-400">
                           <div className="flex flex-col">
                              <span className="text-[9px] font-black uppercase text-slate-500 tracking-widest">Part No</span>
-                             <span className="text-xs font-bold text-slate-100 mono">{state.report.identification.number}</span>
+                             <span className="text-xs font-bold text-slate-100 mono">{state.report.identification?.number ?? "N/A"}</span>
                           </div>
                           <div className="flex flex-col">
                              <span className="text-[9px] font-black uppercase text-slate-500 tracking-widest">Designer</span>
-                             <span className="text-xs font-bold text-slate-100">{state.report.identification.manufacturer}</span>
+                             <span className="text-xs font-bold text-slate-100">{state.report.identification?.manufacturer ?? "N/A"}</span>
                           </div>
                           <div className="flex flex-col">
                              <span className="text-[9px] font-black uppercase text-slate-500 tracking-widest">Logic Family</span>
-                             <span className="text-xs font-bold text-slate-100">{state.report.identification.family}</span>
+                             <span className="text-xs font-bold text-slate-100">{state.report.identification?.family ?? "N/A"}</span>
                           </div>
                        </div>
                     </div>
                     <div className="flex flex-col items-center justify-center p-8 bg-slate-950/50 rounded-3xl border border-slate-800 min-w-[180px]">
                        <span className="text-[9px] font-black uppercase text-slate-500 tracking-widest mb-4">Neural Confidence</span>
-                       <div className="text-4xl font-black text-green-500">{state.report.identification.confidence}%</div>
+                       <div className="text-4xl font-black text-green-500">{state.report.identification?.confidence ?? 0}%</div>
                     </div>
                   </div>
                </div>
@@ -417,7 +417,7 @@ export default function App() {
 
                 <GlassCard title="Research Channels" icon={Globe}>
                   <div className="space-y-3">
-                     {state.report.resources.officialDatasets.map((ds, i) => (
+                     {state.report.resources?.officialDatasets?.map((ds, i) => (
                         <a key={i} href={ds.url} target="_blank" className="flex items-center justify-between p-4 bg-slate-950/40 rounded-xl border border-slate-800 hover:border-blue-500/30 group transition-all">
                            <div className="flex items-center gap-3 min-w-0">
                               <Database size={14} className="text-blue-500 shrink-0" />
@@ -426,7 +426,7 @@ export default function App() {
                            <Link2 size={12} className="text-slate-600 group-hover:text-blue-500 transition-colors"/>
                         </a>
                      ))}
-                     {state.report.resources.wikipedia && (
+                     {state.report.resources?.wikipedia && (
                         <a href={state.report.resources.wikipedia.url} target="_blank" className="flex items-center justify-between p-4 bg-slate-950/40 rounded-xl border border-slate-800 hover:border-slate-600 transition-all group">
                            <div className="flex items-center gap-3">
                               <BookOpen size={14} className="text-slate-500" />
@@ -465,7 +465,7 @@ export default function App() {
                    <div className="p-10 animate-in fade-in duration-500">
                       {activeTab === 'specs' && (
                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {state.report.technicalProfile.map((item) => (
+                            {state.report.technicalProfile?.map((item) => (
                                <div key={item.id} className="p-6 bg-slate-950/50 rounded-2xl border border-slate-800 hover:border-blue-500/20 group transition-all">
                                   <div className="flex items-center gap-4 mb-4">
                                      <div className="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center text-[10px] font-black text-slate-500 border border-slate-800 group-hover:border-blue-500 group-hover:text-blue-500 transition-colors">{item.id}</div>
@@ -487,7 +487,7 @@ export default function App() {
                                   </div>
                                </div>
                                <div className="bg-slate-950 p-10 rounded-[2rem] border border-slate-800 font-mono text-[11px] leading-tight text-blue-400 overflow-x-auto whitespace-pre custom-scrollbar h-[500px] shadow-inner">
-                                  {state.report.pinout.diagram}
+                                  {state.report.pinout?.diagram ?? "Diagram unavailable for this revision."}
                                </div>
                             </div>
                             <div className="space-y-6">
@@ -539,11 +539,11 @@ export default function App() {
                                      <Activity size={16} className="text-blue-500"/>
                                      <span className="text-[10px] font-black uppercase text-blue-500 tracking-widest">Nominal Voltage Rail</span>
                                   </div>
-                                  <p className="text-3xl font-black text-slate-100">{state.report.testing.expectedVoltages}</p>
+                                  <p className="text-3xl font-black text-slate-100">{state.report.testing?.expectedVoltages ?? "Unknown"}</p>
                                </div>
                                <GlassCard title="Failure Signature Analysis" icon={AlertTriangle}>
                                   <div className="space-y-4">
-                                     {state.report.testing.faultSymptoms.map((f, i) => (
+                                     {state.report.testing?.faultSymptoms?.map((f, i) => (
                                         <div key={i} className="flex items-start gap-4 p-5 bg-slate-950/50 rounded-2xl border border-slate-800">
                                            <div className="w-1.5 h-1.5 bg-red-500/50 rounded-full mt-2 shrink-0"></div>
                                            <p className="text-xs text-slate-400 leading-relaxed font-medium">{f}</p>
@@ -555,7 +555,7 @@ export default function App() {
                             <div className="space-y-8">
                                <GlassCard title="Diagnostics Protocols" icon={Filter}>
                                   <div className="space-y-4">
-                                     {state.report.testing.multimeter.map((m, i) => (
+                                     {state.report.testing?.multimeter?.map((m, i) => (
                                         <div key={i} className="flex items-center gap-4 p-5 bg-slate-950/50 rounded-2xl border border-slate-800">
                                            <CheckCircle2 size={14} className="text-blue-600 shrink-0"/>
                                            <p className="text-xs text-slate-400 font-medium">{m}</p>
@@ -568,7 +568,7 @@ export default function App() {
                                      <ShieldCheck size={16} className="text-orange-500"/>
                                      <span className="text-[10px] font-black uppercase text-orange-500 tracking-widest">ESD Safety Protocol</span>
                                   </div>
-                                  <p className="text-xs text-slate-400 leading-relaxed font-medium">{state.report.testing.safety[0] || 'Standard clean-room and ESD precautions required.'}</p>
+                                  <p className="text-xs text-slate-400 leading-relaxed font-medium">{state.report.testing?.safety?.[0] || 'Standard clean-room and ESD precautions required.'}</p>
                                </div>
                             </div>
                          </div>
@@ -582,7 +582,7 @@ export default function App() {
                                   <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">India Retail Distribution</span>
                                </div>
                                <div className="space-y-4">
-                                  {state.report.marketPrice.indiaRetailers.map((ret, i) => (
+                                  {state.report.marketPrice?.indiaRetailers?.map((ret, i) => (
                                      <div key={i} className="flex items-center justify-between p-6 bg-slate-950/40 border border-slate-800 rounded-3xl hover:bg-slate-900 transition-all">
                                         <div className="flex items-center gap-5">
                                            <div className="w-10 h-10 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center">
@@ -605,16 +605,16 @@ export default function App() {
                                <GlassCard title="Inventory Forecasting" icon={BarChart4}>
                                   <div className="p-6 bg-slate-950/50 rounded-2xl border border-slate-800 mb-6">
                                      <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-3">Bulk Pricing Gradient</p>
-                                     <p className="text-xs text-slate-300 font-medium leading-relaxed">{state.report.marketPrice.bulkTrend}</p>
+                                     <p className="text-xs text-slate-300 font-medium leading-relaxed">{state.report.marketPrice?.bulkTrend ?? "Market data unavailable."}</p>
                                   </div>
                                   <div className="grid grid-cols-2 gap-4">
                                      <div className="p-6 bg-slate-950 border border-slate-800 rounded-2xl">
                                         <span className="text-[9px] font-black uppercase text-slate-500 block mb-1">Index Low</span>
-                                        <span className="text-lg font-black text-white">{state.report.marketPrice.minPrice}</span>
+                                        <span className="text-lg font-black text-white">{state.report.marketPrice?.minPrice ?? "N/A"}</span>
                                      </div>
                                      <div className="p-6 bg-slate-950 border border-slate-800 rounded-2xl">
                                         <span className="text-[9px] font-black uppercase text-slate-500 block mb-1">Index Peak</span>
-                                        <span className="text-lg font-black text-white">{state.report.marketPrice.maxPrice}</span>
+                                        <span className="text-lg font-black text-white">{state.report.marketPrice?.maxPrice ?? "N/A"}</span>
                                      </div>
                                   </div>
                                </GlassCard>
@@ -628,53 +628,61 @@ export default function App() {
 
                       {activeTab === 'dossier' && (
                          <div className="space-y-10 max-w-5xl mx-auto">
-                            <section className="space-y-6">
-                               <div className="flex items-center gap-3">
-                                  <BookCopy size={20} className="text-blue-500"/>
-                                  <h4 className="text-lg font-black uppercase tracking-widest text-white">Case Study: {state.report.caseStudy?.title}</h4>
-                               </div>
-                               <div className="p-8 bg-slate-950/60 rounded-[2.5rem] border border-slate-800 space-y-6">
-                                  <div className="space-y-3">
-                                     <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Analytical Description</p>
-                                     <p className="text-sm text-slate-300 leading-relaxed">{state.report.caseStudy?.description}</p>
-                                  </div>
-                                  <div className="p-6 bg-blue-500/10 rounded-2xl border border-blue-500/20">
-                                     <p className="text-[10px] font-black uppercase text-blue-500 tracking-widest mb-2">Outcome & Observations</p>
-                                     <p className="text-sm text-slate-200 leading-relaxed font-medium">{state.report.caseStudy?.outcome}</p>
-                                  </div>
-                               </div>
-                            </section>
+                            {state.report.caseStudy ? (
+                              <section className="space-y-6">
+                                 <div className="flex items-center gap-3">
+                                    <BookCopy size={20} className="text-blue-500"/>
+                                    <h4 className="text-lg font-black uppercase tracking-widest text-white">Case Study: {state.report.caseStudy.title}</h4>
+                                 </div>
+                                 <div className="p-8 bg-slate-950/60 rounded-[2.5rem] border border-slate-800 space-y-6">
+                                    <div className="space-y-3">
+                                       <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Analytical Description</p>
+                                       <p className="text-sm text-slate-300 leading-relaxed">{state.report.caseStudy.description}</p>
+                                    </div>
+                                    <div className="p-6 bg-blue-500/10 rounded-2xl border border-blue-500/20">
+                                       <p className="text-[10px] font-black uppercase text-blue-500 tracking-widest mb-2">Outcome & Observations</p>
+                                       <p className="text-sm text-slate-200 leading-relaxed font-medium">{state.report.caseStudy.outcome}</p>
+                                    </div>
+                                 </div>
+                              </section>
+                            ) : (
+                              <div className="p-8 border border-slate-800 rounded-2xl text-center text-slate-500 text-xs">No case study data available in this report version.</div>
+                            )}
 
-                            <section className="space-y-6">
-                               <div className="flex items-center gap-3">
-                                  <Target size={20} className="text-orange-500"/>
-                                  <h4 className="text-lg font-black uppercase tracking-widest text-white">Strategic Use Cases</h4>
-                               </div>
-                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                  {state.report.useCases?.map((uc, i) => (
-                                     <div key={i} className="p-5 bg-slate-950/40 rounded-2xl border border-slate-800 flex items-start gap-4 hover:border-orange-500/30 transition-all">
-                                        <div className="w-1.5 h-1.5 bg-orange-500 rounded-full mt-2 shrink-0"></div>
-                                        <p className="text-xs font-bold text-slate-300 leading-relaxed">{uc}</p>
-                                     </div>
-                                  ))}
-                               </div>
-                            </section>
+                            {state.report.useCases && (
+                              <section className="space-y-6">
+                                 <div className="flex items-center gap-3">
+                                    <Target size={20} className="text-orange-500"/>
+                                    <h4 className="text-lg font-black uppercase tracking-widest text-white">Strategic Use Cases</h4>
+                                 </div>
+                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {state.report.useCases.map((uc, i) => (
+                                       <div key={i} className="p-5 bg-slate-950/40 rounded-2xl border border-slate-800 flex items-start gap-4 hover:border-orange-500/30 transition-all">
+                                          <div className="w-1.5 h-1.5 bg-orange-500 rounded-full mt-2 shrink-0"></div>
+                                          <p className="text-xs font-bold text-slate-300 leading-relaxed">{uc}</p>
+                                       </div>
+                                    ))}
+                                 </div>
+                              </section>
+                            )}
 
-                            <section className="space-y-6">
-                               <div className="flex items-center gap-3">
-                                  <Database size={20} className="text-green-500"/>
-                                  <h4 className="text-lg font-black uppercase tracking-widest text-white">Advanced Datasets</h4>
-                               </div>
-                               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                  {state.report.references.datasetLinks?.map((dl, i) => (
-                                     <a key={i} href={dl.url} target="_blank" className="p-6 bg-slate-950/80 rounded-2xl border border-slate-800 hover:border-green-500/40 hover:bg-slate-900 group transition-all text-center">
-                                        <Database size={24} className="mx-auto mb-4 text-slate-600 group-hover:text-green-500 transition-colors"/>
-                                        <span className="text-xs font-black uppercase tracking-widest text-slate-400 block group-hover:text-white">{dl.name}</span>
-                                        <span className="text-[9px] text-slate-600 block mt-2">Repository Feed</span>
-                                     </a>
-                                  ))}
-                               </div>
-                            </section>
+                            {state.report.references?.datasetLinks && (
+                              <section className="space-y-6">
+                                 <div className="flex items-center gap-3">
+                                    <Database size={20} className="text-green-500"/>
+                                    <h4 className="text-lg font-black uppercase tracking-widest text-white">Advanced Datasets</h4>
+                                 </div>
+                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    {state.report.references.datasetLinks.map((dl, i) => (
+                                       <a key={i} href={dl.url} target="_blank" className="p-6 bg-slate-950/80 rounded-2xl border border-slate-800 hover:border-green-500/40 hover:bg-slate-900 group transition-all text-center">
+                                          <Database size={24} className="mx-auto mb-4 text-slate-600 group-hover:text-green-500 transition-colors"/>
+                                          <span className="text-xs font-black uppercase tracking-widest text-slate-400 block group-hover:text-white">{dl.name}</span>
+                                          <span className="text-[9px] text-slate-600 block mt-2">Repository Feed</span>
+                                       </a>
+                                    ))}
+                                 </div>
+                              </section>
+                            )}
                          </div>
                       )}
                    </div>
@@ -710,12 +718,23 @@ export default function App() {
                             <div className="space-y-8">
                                <div className="p-8 bg-slate-950/50 rounded-[2rem] border border-slate-800/50 text-center">
                                   <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-8">Verification Accuracy</p>
-                                  <div className="flex justify-center gap-4">
+                                  <div className="flex justify-center gap-4 mb-8">
                                      {[1, 2, 3, 4, 5].map((s) => (
                                         <button key={s} onClick={() => setRating(s)} className="transition-all hover:scale-125">
                                            <Star size={32} fill={rating >= s ? "#3b82f6" : "transparent"} className={rating >= s ? "text-blue-500" : "text-slate-800"} />
                                         </button>
                                      ))}
+                                  </div>
+
+                                  <div className="grid grid-cols-2 gap-4 pt-8 border-t border-slate-800/50">
+                                    <div className="p-4 bg-slate-900/50 rounded-2xl border border-slate-800">
+                                      <p className="text-[8px] font-black uppercase text-slate-500 mb-1 tracking-widest">ID Confidence</p>
+                                      <p className="text-lg font-black text-blue-400">{state.report.identification?.confidence ?? 0}%</p>
+                                    </div>
+                                    <div className="p-4 bg-slate-900/50 rounded-2xl border border-slate-800">
+                                      <p className="text-[8px] font-black uppercase text-slate-500 mb-1 tracking-widest">OCR Precision</p>
+                                      <p className="text-lg font-black text-green-400">{state.report.confidence?.ocrScore ?? 0}%</p>
+                                    </div>
                                   </div>
                                </div>
                                <div className="flex items-start gap-4 p-6 bg-blue-500/5 border border-blue-500/10 rounded-3xl">
