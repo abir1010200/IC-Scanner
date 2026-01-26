@@ -119,6 +119,7 @@ export default function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const reportRef = useRef<HTMLDivElement>(null);
 
+  // Persistence
   useEffect(() => {
     localStorage.setItem('ic_scan_history', JSON.stringify(state.history));
   }, [state.history]);
@@ -126,6 +127,35 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('ic_research_notes', researchNotes);
   }, [researchNotes]);
+
+  // Camera Management
+  useEffect(() => {
+    let stream: MediaStream | null = null;
+
+    if (cameraActive) {
+      const startCamera = async () => {
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } } 
+          });
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+          }
+        } catch (err) {
+          console.error("Camera access failed:", err);
+          setState(prev => ({ ...prev, error: "Unable to access hardware imaging node. Check permissions." }));
+          setCameraActive(false);
+        }
+      };
+      startCamera();
+    }
+
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [cameraActive]);
 
   const processImage = useCallback(async (base64: string, mimeType: string = "image/jpeg") => {
     setState(prev => ({ ...prev, originalImage: base64, isAnalyzing: true, error: null, report: null, enhancedImage: null }));
@@ -214,6 +244,18 @@ export default function App() {
     imageRendering: filters.pixelated ? 'pixelated' : 'auto',
   }), [filters]);
 
+  const takeCapture = () => {
+    const context = canvasRef.current?.getContext('2d');
+    if (context && videoRef.current) {
+        canvasRef.current!.width = videoRef.current.videoWidth;
+        canvasRef.current!.height = videoRef.current.videoHeight;
+        context.drawImage(videoRef.current, 0, 0);
+        const base64 = canvasRef.current!.toDataURL('image/jpeg');
+        setCameraActive(false);
+        processImage(base64);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-blue-500/40">
       <Navbar onShowHistory={() => setShowHistory(true)} />
@@ -261,6 +303,19 @@ export default function App() {
       )}
 
       <main className="flex-1 p-6 lg:p-10 max-w-[1800px] mx-auto w-full">
+        {state.error && (
+          <div className="mb-8 p-6 bg-red-500/10 border border-red-500/20 rounded-[2rem] flex items-center gap-4 text-red-500 animate-in slide-in-from-top-4">
+            <AlertCircle size={24}/>
+            <div className="flex-1">
+              <p className="text-[10px] font-black uppercase tracking-widest">System Alert</p>
+              <p className="text-sm font-bold">{state.error}</p>
+            </div>
+            <button onClick={() => setState(prev => ({ ...prev, error: null }))} className="p-2 hover:bg-red-500/10 rounded-full">
+              <X size={16}/>
+            </button>
+          </div>
+        )}
+
         {!state.report && !state.isAnalyzing && (
           <div className="max-w-4xl mx-auto py-20 text-center">
              <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-blue-500/5 rounded-full border border-blue-500/20 mb-10 animate-in slide-in-from-top-4">
@@ -288,8 +343,8 @@ export default function App() {
 
         {cameraActive && (
           <div className="fixed inset-0 z-[150] bg-black/95 backdrop-blur-3xl flex flex-col p-8">
-            <div className="flex-1 relative glass rounded-[2.5rem] overflow-hidden border-2 border-slate-800 shadow-2xl max-w-6xl mx-auto w-full">
-               <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" onLoadedMetadata={() => videoRef.current?.play()}/>
+            <div className="flex-1 relative glass rounded-[2.5rem] overflow-hidden border-2 border-slate-800 shadow-2xl max-w-6xl mx-auto w-full bg-black">
+               <video ref={videoRef} autoPlay playsInline className="w-full h-full object-contain" />
                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                   <div className="w-64 h-64 md:w-96 md:h-96 border border-blue-500/50 rounded-3xl relative">
                      <div className="absolute inset-0 bg-blue-500/5 animate-pulse"></div>
@@ -305,21 +360,10 @@ export default function App() {
                </div>
             </div>
             <div className="py-12 flex justify-center gap-8">
-               <button onClick={() => {
-                   const context = canvasRef.current?.getContext('2d');
-                   if (context && videoRef.current) {
-                       canvasRef.current!.width = videoRef.current.videoWidth;
-                       canvasRef.current!.height = videoRef.current.videoHeight;
-                       context.drawImage(videoRef.current, 0, 0);
-                       const base64 = canvasRef.current!.toDataURL('image/jpeg');
-                       setCameraActive(false);
-                       (videoRef.current.srcObject as MediaStream)?.getTracks().forEach(t => t.stop());
-                       processImage(base64);
-                   }
-               }} className="bg-white text-black w-20 h-20 rounded-full flex items-center justify-center shadow-2xl active:scale-90 transition-all border-4 border-slate-900 group">
+               <button onClick={takeCapture} className="bg-white text-black w-20 h-20 rounded-full flex items-center justify-center shadow-2xl active:scale-90 transition-all border-4 border-slate-900 group">
                  <Camera size={32} className="group-hover:scale-110 transition-transform"/>
                </button>
-               <button onClick={() => { setCameraActive(false); (videoRef.current?.srcObject as MediaStream)?.getTracks().forEach(t => t.stop()); }} className="bg-slate-900 text-white w-20 h-20 rounded-full flex items-center justify-center shadow-2xl active:scale-90 transition-all border-4 border-slate-800">
+               <button onClick={() => setCameraActive(false)} className="bg-slate-900 text-white w-20 h-20 rounded-full flex items-center justify-center shadow-2xl active:scale-90 transition-all border-4 border-slate-800">
                  <X size={32}/>
                </button>
             </div>
